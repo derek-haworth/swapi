@@ -41,7 +41,6 @@
           console.log("The force is strong with this API");
           console.log(response.results);
           theForce.populateSwapi(response.results);
-          // theForce.populatePeople(response.results);
 
       // Error-handling bad response
       }).fail(function(response) {
@@ -113,24 +112,29 @@
         singleDivs.slice(i, i+4).wrapAll("<div class='single-card'></div>");
       }
 
-      this.openingScrawl(theForce.movieTitles, theForce.scrawlArray, theForce.getRandomColor())
+      this.openingScrawl(theForce.movieTitles, theForce.scrawlArray, theForce.getRandomColor());
+      debugger;
+      this.populatePeople(results);
 
     },
     populatePeople: function(results) {
       results.forEach(function(movie, index) {
-        var charList = $(".character");
+        debugger;
+        var charList = $(".character").attr("movie-index", index);
         var peopleObjId;
         for (var i = 0; i < movie.characters.length; i++) {
-            (function(omega) {
-              var charUrl = movie.characters[omega]; 
-              var result = charUrl.slice(28, 31);
-              peopleObjId = parseInt(result);
-              //the peopleObjId becomes the key selector from the people obj created above in the people api request
-              console.log(people[peopleObjId]);
-            })(i);
+            var charUrl = movie.characters[i]; 
+            var result = charUrl.slice(28, 31);
+            peopleObjId = parseInt(result);
+            //the var peopleObjId becomes the key selector for the people obj created above in the people api request
+            console.log(people[peopleObjId]);
+            var newChar = $("<li>" + people[peopleObjId] + "</li>");
+            charList.append(newChar);
+            if (i === 3) {
+              return;
+            };
         }
-        var newChar = $("<p>" + people[peopleObjId] + "</p>");
-        charList.append(newChar);
+        charList = "";
       });
     },
 
