@@ -3,53 +3,56 @@
 
   // Anonymous function to trigger our requests for people and film apis
   $(function() {
-      for (var i = 1; i < 10; i++) {
-        (function(alpha) {
-          var j = alpha;
-          $.ajax({
-            url: 'https://swapi.co/api/people/?page=' + j,
-            method: "GET",
-            async: true,
-            dataType: "json"
-          }).done(function(response) {
-              for (var k = 0; k < response.results.length; k++) {
-                (function(beta) {
-                  var str = response.results[beta].url; 
-                  var res = str.slice(28, 31);
-                  var x = parseInt(res);
-                  people[x] = response.results[beta].name;
-                })(k);
-              }
-          // Error-handling bad response
-          }).fail(function(response) {
-              console.log("There's a disturbance in the force");
-              if (response.statusText === 'error') {
-                $('#api-message').removeClass('api-message-error');
-              }
-          })
-        })(i);
-      }
-      peopleArr.push(people);
-      console.log(people);
-
-      $.ajax({
-        url: 'https://swapi.co/api/films',
-        method: "GET",
-        async: true,
-        dataType: "json"
-      }).done(function(response) {
-          console.log("The force is strong with this API");
-          console.log(response.results);
-          theForce.populateSwapi(response.results);
-
-      // Error-handling bad response
-      }).fail(function(response) {
-          console.log("There's a disturbance in the force");
-          if (response.statusText === 'error') {
-            $('#api-message').removeClass('api-message-error');
-          }
-      })
+    for (var i = 1; i < 10; i++) {
+      (function(alpha) {
+        var j = alpha;
+        $.ajax({
+          url: 'https://swapi.co/api/people/?page=' + j,
+          method: "GET",
+          async: true,
+          dataType: "json"
+        }).done(function(response) {
+            for (var k = 0; k < response.results.length; k++) {
+              (function(beta) {
+                var str = response.results[beta].url; 
+                var res = str.slice(28, 31);
+                var x = parseInt(res);
+                people[x] = response.results[beta].name;
+              })(k);
+            }
+        // Error-handling bad response
+        }).fail(function(response) {
+            console.log("There's a disturbance in the force");
+            if (response.statusText === 'error') {
+              $('#api-message').removeClass('api-message-error');
+            }
+        })
+      })(i);
+    }
+    peopleArr.push(people);
+    console.log(people);
+    getFilms();
   });
+
+  function getFilms() {
+    $.ajax({
+      url: 'https://swapi.co/api/films',
+      method: "GET",
+      async: true,
+      dataType: "json"
+    }).done(function(response) {
+        console.log("The force is strong with this API");
+        console.log(response.results);
+        theForce.populateSwapi(response.results);
+
+    // Error-handling bad response
+    }).fail(function(response) {
+        console.log("There's a disturbance in the force");
+        if (response.statusText === 'error') {
+          $('#api-message').removeClass('api-message-error');
+        }
+    })
+  }
 
   // Main Object with methods to create movie cards and populate graph
   var theForce = {
