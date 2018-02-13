@@ -1,7 +1,7 @@
   var people = {};
   var peopleArr = [];
 
-  // Anonymous function to trigger our requests
+  // Anonymous function to trigger our requests for people and film apis
   $(function() {
       for (var i = 1; i < 10; i++) {
         (function(alpha) {
@@ -20,6 +20,7 @@
                   people[x] = response.results[beta].name;
                 })(k);
               }
+          // Error-handling bad response
           }).fail(function(response) {
               console.log("There's a disturbance in the force");
               if (response.statusText === 'error') {
@@ -40,6 +41,9 @@
           console.log("The force is strong with this API");
           console.log(response.results);
           theForce.populateSwapi(response.results);
+          // theForce.populatePeople(response.results);
+
+      // Error-handling bad response
       }).fail(function(response) {
           console.log("There's a disturbance in the force");
           if (response.statusText === 'error') {
@@ -91,31 +95,43 @@
           class: 'movie-director',
           text: "Director: " + movie.director
         }).appendTo($div2);
+
+        $('<div />', {
+          class: 'character',
+          "movie-index": index
+        }).appendTo($div2);
       
         // Pass the opening_crawl into the countWords function and push into array
         var words = theForce.countWords(movie.opening_crawl);
         theForce.scrawlArray.push(words);
 
-        // Loop through the characters array in each movie and take slice out the ending number and create to create a unique Id
-        for (var i = 0; i < movie.characters.length; i++) {
-            (function(omega) {
-              var charUrl = movie.characters[omega]; 
-              var result = charUrl.slice(28, 31);
-              var charId = parseInt(result);
-            })(i);
-        }
-        // compare charId to the people object keys gathered from people api request in the people object
-
       });
 
       // Add each card in it's own div inside the main card container
-      var singleDivs = $("#cards > div > div > div");
-      for(var i = 0; i < singleDivs.length; i+=3) {
-        singleDivs.slice(i, i+3).wrapAll("<div class='single-card'></div>");
+      var singleDivs = $("#cards > div > div > div ");
+      for(var i = 0; i < singleDivs.length; i+=4) {
+        singleDivs.slice(i, i+4).wrapAll("<div class='single-card'></div>");
       }
 
       this.openingScrawl(theForce.movieTitles, theForce.scrawlArray, theForce.getRandomColor())
 
+    },
+    populatePeople: function(results) {
+      results.forEach(function(movie, index) {
+        var charList = $(".character");
+        var peopleObjId;
+        for (var i = 0; i < movie.characters.length; i++) {
+            (function(omega) {
+              var charUrl = movie.characters[omega]; 
+              var result = charUrl.slice(28, 31);
+              peopleObjId = parseInt(result);
+              //the peopleObjId becomes the key selector from the people obj created above in the people api request
+              console.log(people[peopleObjId]);
+            })(i);
+        }
+        var newChar = $("<p>" + people[peopleObjId] + "</p>");
+        charList.append(newChar);
+      });
     },
 
     // Creates chart with movie titles and scrawl count
