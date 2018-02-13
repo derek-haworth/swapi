@@ -97,7 +97,7 @@
 
         $('<div />', {
           class: 'character',
-          "movie-index": index
+          id: index
         }).appendTo($div2);
       
         // Pass the opening_crawl into the countWords function and push into array
@@ -113,14 +113,13 @@
       }
 
       this.openingScrawl(theForce.movieTitles, theForce.scrawlArray, theForce.getRandomColor());
-      debugger;
       this.populatePeople(results);
 
     },
     populatePeople: function(results) {
+
+      // TODO: Grab random characters instead of the first 3 in the array to give it some appeal
       results.forEach(function(movie, index) {
-        debugger;
-        var charList = $(".character").attr("movie-index", index);
         var peopleObjId;
         for (var i = 0; i < movie.characters.length; i++) {
             var charUrl = movie.characters[i]; 
@@ -129,12 +128,13 @@
             //the var peopleObjId becomes the key selector for the people obj created above in the people api request
             console.log(people[peopleObjId]);
             var newChar = $("<li>" + people[peopleObjId] + "</li>");
-            charList.append(newChar);
-            if (i === 3) {
+            // set the characters to the respective movie index id
+            $("#" + index).append(newChar);
+            // once we hit 3 in the loop - stop
+            if (i === 2) {
               return;
             };
         }
-        charList = "";
       });
     },
 
