@@ -1,3 +1,12 @@
 # SWAPI Exercise
 
 **Done with old fashioned `JavaScript` and `jQuery`**
+
+## Changelog
+
+### - 2018-02-13
+- Modified the people api calls from 21 (from before) to 9 in order to retrieve a list of all the characters. Not sure how to make any less calls than that.
+
+- I created a cachable object based off the people api. I used the urls and slice out the number unique to the character and used that as the object key with the property being the character name. Then when I call the movie api and cycle through the characters array I do the same except I use the sliced number as the object selector in my previously creaated object to use to print my characters to the movie cards. This way they are associated to their respective movies.
+
+- Added respective characters to their associated movies in the cards. 
