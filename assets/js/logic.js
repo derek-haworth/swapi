@@ -104,7 +104,7 @@
               var charId = parseInt(result);
             })(i);
         }
-        compare charId to the people object keys gathered from people api request in the people object
+        // compare charId to the people object keys gathered from people api request in the people object
 
       });
 
