@@ -1,26 +1,107 @@
-var movieTitles = [],
-      scrawlArray = [];
+loadPeople();
 
-  $(function() {
+  function loadPeople() {
+    // var people = {};
+    // var peopleArr = [];
+    // for (var i = 1; i < 10; i++) {
+    //   (function(alpha) {
+    //     var j = alpha;
+    //     $.ajax({
+    //       url: 'https://swapi.co/api/people/?page=' + j,
+    //       method: "GET",
+    //       dataType: "json"
+    //     }).done(function(response) {
+    //         for (var k = 0; k < response.results.length; k++) {
+    //           (function(beta) {
+    //             var str = response.results[beta].url; 
+    //             var res = str.slice(28, 31);
+    //             var x = parseInt(res);
+    //             people[x] = response.results[beta].name;
+    //           })(k);
+    //         }
+    //     }).fail(function(response) {
+    //         console.log("There's a disturbance in the force");
+    //         if (response.statusText === 'error') {
+    //           $('#api-message').removeClass('api-message-error');
+    //         }
+    //     })
+    //   })(i);
+    // }
+    // peopleArr.push(people);
+    // loadFilms();
+  }
 
-    $.ajax({
-      url: 'https://swapi.co/api/films',
-      method: "GET",
-      dataType: "json"
-    }).done(function(response) {
-        console.log("The force is strong with this API");
-        console.log(response.results);
-        populateSwapi(response.results);
+  function loadFilms() {
+    // $.ajax({
+    //   url: 'https://swapi.co/api/films',
+    //   method: "GET",
+    //   dataType: "json"
+    // }).done(function(response) {
+    //     console.log("The force is strong with this API");
+    //     console.log(response.results);
+    //     theForce.populateSwapi(response.results);
+    // }).fail(function(response) {
+    //     console.log("There's a disturbance in the force");
+    //     if (response.statusText === 'error') {
+    //       $('#api-message').removeClass('api-message-error');
+    //     }
+    // })
+  }
 
-    }).fail(function(response) {
-        console.log("There's a disturbance in the force");
-        if (response.statusText === 'error') {
-          $('#api-message').removeClass('api-message-error');
-        }
-    })
 
+// Main Object with methods to create movie cards and populate graph
+  var theForce = {
 
-    function populateSwapi(results) {
+    movieTitles: [],
+    scrawlArray: [],
+    peopleArr: [],
+    loadPeople: function() {
+      var people = {};
+      for (var i = 1; i < 10; i++) {
+        (function(alpha) {
+          var j = alpha;
+          $.ajax({
+            url: 'https://swapi.co/api/people/?page=' + j,
+            method: "GET",
+            dataType: "json"
+          }).done(function(response) {
+              for (var k = 0; k < response.results.length; k++) {
+                (function(beta) {
+                  var str = response.results[beta].url; 
+                  var res = str.slice(28, 31);
+                  var x = parseInt(res);
+                  people[x] = response.results[beta].name;
+                })(k);
+              }
+          }).fail(function(response) {
+              console.log("There's a disturbance in the force");
+              if (response.statusText === 'error') {
+                $('#api-message').removeClass('api-message-error');
+              }
+          })
+        })(i);
+      }
+      this.peopleArr.push(people);
+      console.log(this.peopleArr);
+      this.loadFilms();
+    }, 
+    loadFilms: function() {
+      $.ajax({
+        url: 'https://swapi.co/api/films',
+        method: "GET",
+        dataType: "json"
+      }).done(function(response) {
+          console.log("The force is strong with this API");
+          console.log(response.results);
+          theForce.populateSwapi(response.results);
+      }).fail(function(response) {
+          console.log("There's a disturbance in the force");
+          if (response.statusText === 'error') {
+            $('#api-message').removeClass('api-message-error');
+          }
+      })
+    },
+    populateSwapi: function(results) {
       var $cards = $('#cards');
 
       results.forEach(function(movie, index, arr) {
@@ -36,7 +117,7 @@ var movieTitles = [],
 
         }
         // add each movie title into array
-        movieTitles.push(movie.title);
+        theForce.movieTitles.push(movie.title);
 
         //take movie titles and remove spaces to use for image paths
         var spacedTitle = movie.title;
@@ -58,24 +139,11 @@ var movieTitles = [],
           class: 'movie-director',
           text: "Director: " + movie.director
         }).appendTo($div2);
+      
+        // Pass the opening_crawl into the countWords function and push into array
+        var words = theForce.countWords(movie.opening_crawl);
+        theForce.scrawlArray.push(words);
 
-        var words = countWords(movie.opening_crawl);
-        scrawlArray.push(words);
-
-
-        for (var i = 0; i < movie.characters.length; i++) {
-          // get only first 3 character links for each film 
-          if( i <= 2 ) {
-            // prints out the people list of first 3 characters in film > character array
-            // console.log(movie.characters[i]);
-            $.getJSON(movie.characters[i], function(data) {
-              // prints out the character NAME of first 3 characters people list objects
-              // console.log(data.name);
-              // Grab names from each json response of characters api and create 
-              // a list and append list of 3 to each movie 
-            });
-          }
-        }
       });
 
       // Add each card in it's own div inside the main card container
@@ -84,66 +152,68 @@ var movieTitles = [],
         singleDivs.slice(i, i+3).wrapAll("<div class='single-card'></div>");
       }
 
-      openingScrawl(movieTitles)
+      this.openingScrawl(theForce.movieTitles, theForce.scrawlArray, theForce.getRandomColor())
 
-    }
+    },
 
-  });
-
-
-  // Creates chart with movie titles and scrawl count
-  function openingScrawl(movieTitles) {
-    var ctx = document.getElementById("scrawlChart").getContext('2d');
-    var myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-          labels: movieTitles,
-          datasets: [{
-              data: scrawlArray,
-              backgroundColor: getRandomColor()
-          }]
-      },
-      options: {
-        title: {
-            display: true,
-            text: 'Opening Scrawl Lengths'
+    // Creates chart with movie titles and scrawl count
+    openingScrawl: function(movieTitles, openingWords, colorGraph) {
+      var ctx = document.getElementById("scrawlChart").getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: movieTitles,
+            datasets: [{
+                data: openingWords,
+                backgroundColor: colorGraph
+            }]
         },
-        legend: { 
-          display: false 
-        },
-        scales: {
-          xAxes: [{
-            ticks: {
-              autoSkip: false
-            }
-          }],
-          yAxes: [{
-            scaleLabel: {
+        options: {
+          title: {
               display: true,
-              labelString: 'Scrawl Length'
-            }
-          }]
+              text: 'Opening Scrawl Lengths'
+          },
+          legend: { 
+            display: false 
+          },
+          scales: {
+            xAxes: [{
+              ticks: {
+                autoSkip: false
+              }
+            }],
+            yAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: 'Scrawl Length'
+              }
+            }]
+          }
         }
-      }
-    });
-  }
+      });
+    },
 
-  // Generate random colors for each bar in graph
-  // pass function in the openingScrawl backgroundcolor in data options
-  function getRandomColor() {
-    var letters = '0123456789ABCDEF'.split(''),
-        colorArray = [];
+    // Generate random colors for each bar in graph
+    // pass function in the openingScrawl backgroundcolor in data options
+    getRandomColor: function() {
+      var letters = '0123456789ABCDEF'.split(''),
+          colorArray = [];
 
-    for (var i = 0; i < 7; i++) {
-      var color = '#';
-      for (var j = 0; j < 6; j++ ) {
-        color += letters[Math.floor(Math.random() * 16)];
+      for (var i = 0; i < 7; i++) {
+        var color = '#';
+        for (var j = 0; j < 6; j++ ) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        colorArray.push(color);
       }
-      colorArray.push(color);
+      return colorArray;
+    }, 
+
+    // Function to use for scrawl count
+    countWords: function(words) {
+      return words.trim().split(/\s+/).length;
     }
-    return colorArray
+
   }
 
-  function countWords(words) {
-    return words.trim().split(/\s+/).length;
-  }
+theForce.loadPeople();
