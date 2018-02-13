@@ -34,7 +34,7 @@ h2.panel-title {
     box-shadow: 0 0 6px 0 rgba(30,45,62,.09);
     height: 100%;
     margin: 0 0 30px;
-    min-height: 280px;
+    min-height: 340px;
 }
 .card-container .single-card:nth-child(odd) {
 	padding-right: 25px;
