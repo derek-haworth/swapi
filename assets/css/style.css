@@ -10,11 +10,15 @@ h2.panel-title {
 .scrawlChart {
 	padding: 10px 0 0 0;
 }
+.movie-poster {
+	margin: 0 0 5px 0;
+}
 .movie-poster img{
 	height: 140px;
 }
 .movie-title {
-	font-size: 18px;
+	font-size: 16px;
+	font-weight: bold;
 }
 .card-container {
 	border: 1px solid rgba(30,45,62,.09);
