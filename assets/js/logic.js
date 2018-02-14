@@ -1,15 +1,16 @@
+  // Display a spinner for the user while we get our data
   $(document).ajaxStart(function() {
-  $("#loading").show();
-}).ajaxStop(function() {
-  $("#loading").hide();
-});
+    $("#loading").show();
+  }).ajaxStop(function() {
+    $("#loading").hide();
+  });
 
 
   var people = {};
   var peopleArr = [];
 
-  // Anonymous function to trigger our requests for people and film apis
-  $(function() {
+  // Invoke this function first in order to retrieve our people list
+  (function () {
     for (var i = 1; i < 10; i++) {
       (function(alpha) {
         var j = alpha;
@@ -38,8 +39,9 @@
     }
     peopleArr.push(people);
     console.log(people);
+    // Call the films request and build the cards
     getFilms();
-  });
+  })();
 
   function getFilms() {
     $.ajax({
@@ -205,5 +207,4 @@
     countWords: function(words) {
       return words.trim().split(/\s+/).length;
     }
-
   }

@@ -53,14 +53,14 @@ h2.panel-title {
     border: 16px solid #f3f3f3; 
     border-top: 16px solid #3498db;
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     animation: spin 2s linear infinite;
     position: absolute;
     top: 0px;
     z-index: 999;
     left: 50%;
-    margin-left: -120px;
+    margin-left: -100px;
 }
 
 @keyframes spin {
